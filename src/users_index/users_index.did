@@ -1,0 +1,25 @@
+type NFT = record {
+  token_index : text;
+  canister_id : principal;
+  standard : text;
+};
+type Result = variant { Ok : UserLoginResp; Err : text };
+type UserInfo = record {
+  nft : opt NFT;
+  pid : principal;
+  created : int;
+  email : text;
+  avatar : text;
+};
+type UserLoginResp = record { userinfo : UserInfo; canister_id : principal };
+service : (principal) -> {
+  canister_count : () -> (nat64) query;
+  get_canister : () -> (opt principal) query;
+  login : () -> (Result);
+  login_test : (principal) -> (Result);
+  search_canister : (principal) -> (opt principal) query;
+  total_count : () -> (nat64) query;
+  verify_canister : (principal) -> (bool) query;
+  wallet_balance : () -> (nat64) query;
+  wallet_receive : () -> ();
+}

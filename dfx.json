@@ -1,0 +1,20 @@
+{
+  "canisters": {
+    "users": {
+      "main": "src/users/main.mo",
+      "type": "motoko"
+    },
+    "users_index": {
+      "candid": "src/users_index/users_index.did",
+      "package": "users_index",
+      "type": "rust"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": "vessel sources"
+    }
+  },
+  "version": 1
+}

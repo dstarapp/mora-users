@@ -1,0 +1,84 @@
+type UserInfo = 
+ record {
+   avatar: text;
+   created: int;
+   email: text;
+   nft: opt NFT;
+   pid: principal;
+ };
+type UserActor = 
+ service {
+   add_attribute: (Attribute) -> (bool);
+   add_collection: (principal, text) -> (bool);
+   canister_memory: () -> (nat) query;
+   create_planet: (PlanetArgs) -> (CreatePlanetResp);
+   get_avatar: (opt principal) -> (text) query;
+   get_collections: (QueryCommonReq) -> (QueryCollectionResp) query;
+   get_email: () -> (text) query;
+   get_planets: () -> (opt vec principal) query;
+   get_subscribes: () -> (opt vec principal) query;
+   login: () -> (UserInfo);
+   login_proxy: (principal) -> (UserInfo);
+   on_planet_msg: (principal, PlanetMsg) -> (bool);
+   profile: () -> (opt UserInfo) query;
+   remove_collection: (principal, text) -> (bool);
+   set_avatar: (text) -> (bool);
+   set_email: (text) -> (bool);
+   wallet_balance: () -> (nat) query;
+   wallet_receive: () -> (record {accepted: nat64;});
+   whoami: () -> (principal) query;
+ };
+type QueryCommonReq = 
+ record {
+   page: nat;
+   size: nat;
+ };
+type QueryCollectionResp = 
+ record {
+   data: vec Collection;
+   hasmore: bool;
+   page: nat;
+   total: int;
+ };
+type PlanetMsgType = 
+ variant {
+   add;
+   remove;
+   subscribe;
+   unsubscribe;
+ };
+type PlanetMsg = 
+ record {
+   data: opt blob;
+   msg_type: PlanetMsgType;
+   user: principal;
+ };
+type PlanetArgs = 
+ record {
+   avatar: text;
+   code: text;
+   desc: text;
+   name: text;
+ };
+type NFT = 
+ record {
+   canister_id: principal;
+   standard: text;
+   token_index: text;
+ };
+type CreatePlanetResp = 
+ variant {
+   Err: text;
+   Ok: record {id: principal;};
+ };
+type Collection = 
+ record {
+   article_id: text;
+   canister_id: principal;
+ };
+type Attribute = 
+ record {
+   key: text;
+   value: text;
+ };
+service : (principal) -> UserActor
