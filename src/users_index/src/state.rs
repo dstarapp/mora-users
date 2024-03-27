@@ -6,7 +6,7 @@ use crate::install::*;
 use ic_stable_structures::writer::Writer;
 use ic_stable_structures::Memory;
 use ic_stable_structures::{BoundedStorable, DefaultMemoryImpl, StableBTreeMap, Storable, Vec};
-use std::{borrow::Cow, cell::RefCell};
+use std::{borrow::Cow, cell::RefCell, vec};
 
 type VMemory = VirtualMemory<DefaultMemoryImpl>;
 
@@ -238,5 +238,30 @@ pub fn get_canister_count() -> u64 {
         let state = s.borrow();
         let all_canisters = state.all_canisters.borrow();
         all_canisters.len()
+    })
+}
+
+pub fn get_canister_list() -> vec::Vec<Principal> {
+    STATE.with(|s| {
+        let mut data = vec::Vec::new();
+        let state = s.borrow();
+        let all_canisters = state.all_canisters.borrow();
+        for x in all_canisters.iter() {
+            data.push(x.0);
+        }
+        data
+    })
+}
+
+pub fn get_user_index(user: Principal) -> u128 {
+    STATE.with(|s| {
+        let state = s.borrow();
+        let user_canisters = state.user_canisters.borrow();
+        let ret = user_canisters.get(&StablePrincipal(user));
+
+        match ret {
+            None => 0,
+            Some(idx) => idx,
+        }
     })
 }

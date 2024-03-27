@@ -14,10 +14,12 @@ type UserInfo = record {
 type UserLoginResp = record { userinfo : UserInfo; canister_id : principal };
 service : (principal) -> {
   canister_count : () -> (nat64) query;
+  canister_list : () -> (vec principal) query;
   get_canister : () -> (opt principal) query;
   login : () -> (Result);
   login_test : (principal) -> (Result);
   search_canister : (principal) -> (opt principal) query;
+  search_index : (principal) -> (nat) query;
   total_count : () -> (nat64) query;
   verify_canister : (principal) -> (bool) query;
   wallet_balance : () -> (nat64) query;

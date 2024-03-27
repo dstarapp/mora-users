@@ -5,13 +5,10 @@ import Bool "mo:base/Bool";
 import Principal "mo:base/Principal";
 import Text "mo:base/Text";
 import Option "mo:base/Option";
-import Array "mo:base/Array";
 import TrieMap "mo:base/TrieMap";
 import Queue "mo:mutable-queue/Queue";
 import Iter "mo:base/Iter";
-import Error "mo:base/Error";
 import Time "mo:base/Time";
-import Debug "mo:base/Debug";
 import Buffer "mo:base/Buffer";
 import Cycles "mo:base/ExperimentalCycles";
 import Prim "mo:prim";
@@ -42,7 +39,7 @@ shared ({ caller = owner_ }) actor class UserActor(helperid : Principal) = this 
   //cycles deposit
   public func wallet_receive() : async { accepted : Nat64 } {
     let available = Cycles.available();
-    let accepted = Cycles.accept(Nat.min(available, 10_000_000));
+    let accepted = Cycles.accept<system>(Nat.min(available, 10_000_000));
     { accepted = Nat64.fromNat(accepted) };
   };
 
@@ -460,7 +457,7 @@ shared ({ caller = owner_ }) actor class UserActor(helperid : Principal) = this 
     false;
   };
 
-  private func limitCollections(caller : Principal, req : QueryCommonReq, q : Queue.Queue<Collection>) : (Int, Bool, [Collection]) {
+  private func limitCollections(_caller : Principal, req : QueryCommonReq, q : Queue.Queue<Collection>) : (Int, Bool, [Collection]) {
     var data = Buffer.Buffer<Collection>(0);
     let pagesize = checkPageSize(req.page, req.size);
     let size = pagesize.1;
@@ -472,7 +469,7 @@ shared ({ caller = owner_ }) actor class UserActor(helperid : Principal) = this 
 
     Iter.iterate(
       iter,
-      func(x : Collection, idx : Int) {
+      func(x : Collection, _idx : Int) {
         if (total >= start and total < start + size) {
           data.add(x);
         };
@@ -482,7 +479,7 @@ shared ({ caller = owner_ }) actor class UserActor(helperid : Principal) = this 
     if (total >= start + size) {
       hasmore := true;
     };
-    return (total, hasmore, data.toArray());
+    return (total, hasmore, Buffer.toArray(data));
   };
 
   private func checkPageSize(p : Nat, s : Nat) : (Int, Int) {

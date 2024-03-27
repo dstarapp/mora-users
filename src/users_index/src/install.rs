@@ -64,23 +64,23 @@ pub async fn call_canister_install(
         arg: canister_install_args,
     };
 
-    match ic_cdk::api::call::call(
+    let ret: CallResult<()> = ic_cdk::api::call::call(
         Principal::management_canister(),
         "install_code",
         (install_config,),
     )
-    .await
-    {
-        Ok(x) => x,
+    .await;
+
+    match ret {
+        Ok(_x) => true,
         Err((code, msg)) => {
             print(format!(
                 "An error happened during the call_canister_install: {}: {}",
                 code as u8, msg
             ));
-            return false;
+            false
         }
-    };
-    true
+    }
 }
 
 pub async fn call_canister_create(

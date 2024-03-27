@@ -4,9 +4,12 @@ use ic_cdk::print;
 use ic_cdk_macros::*;
 use serde::Deserialize;
 
+mod dao;
 mod install;
 mod state;
 mod user;
+
+use dao::MoraDaoService;
 use install::*;
 use state::*;
 use user::{PlanetMsg, UserInfo, UserService};
@@ -16,27 +19,6 @@ struct UserLoginResp {
     canister_id: Principal,
     userinfo: UserInfo,
 }
-
-// #[update]
-// async fn sync_old_user(user: Principal, old: Principal) -> bool {
-//     assert!(get_sim_owner() == ic_cdk::api::caller());
-//     let canister_id = match get_user_canister(user) {
-//         Some(canister) => canister,
-//         None => {
-//             let canister = create_user_canister(user, get_helper()).await;
-//             insert_canister(user, canister);
-//             canister
-//         }
-//     };
-//     let service = UserService(canister_id);
-//     match service.syncold(old).await {
-//         Ok((ok,)) => ok,
-//         Err((code, msg)) => {
-//             print(format!("syncold {}, {}", code as u8, msg));
-//             false
-//         }
-//     }
-// }
 
 #[update]
 async fn update_canister(canister: Principal) -> bool {
@@ -63,6 +45,18 @@ fn canister_count() -> u64 {
 #[candid_method(query)]
 fn search_canister(user: Principal) -> Option<Principal> {
     return get_user_canister(user);
+}
+
+#[query]
+#[candid_method(query)]
+fn search_index(user: Principal) -> u128 {
+    return get_user_index(user);
+}
+
+#[query(name = "canister_list")]
+#[candid_method(query)]
+fn canister_list() -> Vec<Principal> {
+    return get_canister_list();
 }
 
 #[query(name = "get_canister")]
@@ -119,6 +113,21 @@ fn get_helper() -> Principal {
 async fn notify_planet_msg(msg: PlanetMsg) -> bool {
     let pid = ic_cdk::api::caller();
     // verify pid is planet ( call hepler verify)
+    let dao = MoraDaoService(get_helper());
+    match dao.verify_planet(pid).await {
+        Ok((valid,)) => {
+            if !valid {
+                return false;
+            }
+        }
+        Err((code, msg)) => {
+            print(format!(
+                "An error happened during verifyPlanet: {}: {}",
+                code as u8, msg
+            ));
+            return false;
+        }
+    }
 
     let canister_id = get_user_canister(msg.user);
     if canister_id.is_none() {
@@ -132,7 +141,7 @@ async fn notify_planet_msg(msg: PlanetMsg) -> bool {
         }
         Err((code, msg)) => {
             print(format!(
-                "An error happened during the call: {}: {}",
+                "An error happened during on_planet_msg: {}: {}",
                 code as u8, msg
             ));
             return false;
