@@ -1,0 +1,23 @@
+[package]
+name = "linketh"
+version = "0.1.0"
+edition = "2018"
+
+#[lib]
+#crate-type = ["cdylib"]
+
+[dependencies]
+candid = "0.8.3"
+ic-cdk = "0.6.1"
+ic-cdk-macros = "0.6.1"
+ic-types = "0.6.0"
+lazy_static = "1.4.0"
+serde = "1.0.147"
+hex = "0.4.3"
+libsecp256k1 = "0.6.0"
+easy-hasher = "2.2.1"
+
+
+[[bin]]
+name="linketh"
+path="./src/main.rs"

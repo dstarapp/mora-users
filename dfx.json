@@ -1,5 +1,10 @@
 {
   "canisters": {
+    "linketh": {
+      "candid": "src/linketh/linketh.did",
+      "package": "linketh",
+      "type": "rust"
+    },
     "users": {
       "main": "src/users/main.mo",
       "type": "motoko"

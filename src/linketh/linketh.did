@@ -1,0 +1,10 @@
+type Profile = record { created : nat64; address : text };
+service : {
+  getByEth : (text) -> (opt Profile) query;
+  getPrincipalByEth : (text) -> (opt principal) query;
+  getProfileByPrincipal : (principal) -> (opt Profile) query;
+  linkAddress : (text, text) -> (bool);
+  wallet_balance : () -> (nat64) query;
+  wallet_receive : () -> ();
+  whoami : () -> (principal) query;
+}
