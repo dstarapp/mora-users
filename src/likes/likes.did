@@ -1,0 +1,8 @@
+service : {
+  hdel : (text, text) -> (bool);
+  hexist : (text, text) -> (bool) query;
+  hget : (text, text) -> (opt vec nat8) query;
+  hset : (text, text, vec nat8) -> (bool);
+  wallet_balance : () -> (nat64) query;
+  wallet_receive : () -> ();
+}

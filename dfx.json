@@ -1,5 +1,15 @@
 {
   "canisters": {
+    "like_allot": {
+      "candid": "src/like_allot/like_allot.did",
+      "package": "like_allot",
+      "type": "rust"
+    },
+    "likes": {
+      "candid": "src/likes/likes.did",
+      "package": "likes",
+      "type": "rust"
+    },
     "linketh": {
       "candid": "src/linketh/linketh.did",
       "package": "linketh",

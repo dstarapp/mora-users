@@ -1,0 +1,16 @@
+type CanisterNodeMap = record {
+  canister_id : principal;
+  end_node : nat32;
+  start_node : nat32;
+};
+service : {
+  allot_canister_list : () -> (vec CanisterNodeMap) query;
+  batch_create_canisters : (nat32) -> (vec CanisterNodeMap);
+  get_correlation_canister : (text) -> (principal) query;
+  hdel : (text, text) -> ();
+  hscan : (text, text) -> (principal) query;
+  hset : (text, text, vec nat8) -> ();
+  verify_canister : (principal) -> (bool) query;
+  wallet_balance : () -> (nat64) query;
+  wallet_receive : () -> ();
+}

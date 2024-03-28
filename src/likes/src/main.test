@@ -1,0 +1,53 @@
+mod hashset;
+mod lib;
+
+use crate::lib::*;
+use hashset::HashSet;
+
+#[cfg(not(any(target_arch = "wasm32", test)))]
+fn main() {
+    let mut str1: HashSet<&str, &[u8]> = HashSet::new();
+    let m: &[u8] = &[1, 2, 3];
+    str1.insert("A", "B", m);
+
+    for (k, v) in &str1.hset {
+        print!("{}\n", k);
+        for (f_k, f_v) in &v.field {
+            print!("{}-{:?}\n", f_k, f_v);
+        }
+    }
+
+    str1.insert("A", "B", &[1, 2]);
+
+    for (k, v) in &str1.hset {
+        print!("{}\n", k);
+        for (f_k, f_v) in &v.field {
+            print!("{}-{:?}\n", f_k, f_v);
+        }
+    }
+
+    LIKES.with(|likes_ref| {
+        let mut likes = likes_ref.borrow_mut();
+        likes.insert(String::from("test"), String::from("key"), [1, 2].to_vec());
+
+        let u2: [u8; 2] = [1, 2];
+        let u1: Vec<u8> = [1, 2].to_vec();
+        println!(
+            "{:?}, {}",
+            std::mem::size_of_val(&u1),
+            std::mem::size_of_val(&*u1),
+        );
+
+        println!(
+            "{:?}, {}",
+            std::mem::size_of_val(&u2),
+            std::mem::size_of_val(&u2),
+        );
+    });
+
+    std::print!("{}", users_memory_size());
+    std::print!("{}", crate::lib::export_candid());
+}
+
+#[cfg(any(target_arch = "wasm32", test))]
+fn main() {}

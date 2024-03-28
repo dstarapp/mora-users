@@ -1,0 +1,22 @@
+[package]
+name = "like_allot"
+version = "0.1.0"
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+crate-type = ["cdylib"]
+path="./src/lib.rs"
+
+[dependencies]
+candid = "0.8.3"
+ic-cdk = "0.6.3"
+ic-cdk-macros = "0.6.3"
+serde_bytes = "0.11.5"
+crc = "3.0"
+serde = "1.0.133"
+
+[[bin]]
+name="like_allot"
+path="./src/main.rs"
